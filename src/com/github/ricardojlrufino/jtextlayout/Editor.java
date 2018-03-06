@@ -112,11 +112,6 @@ public class Editor extends javax.swing.JFrame {
         tfDestaqueInicio.setColumns(3);
         tfDestaqueInicio.setText("22");
         tfDestaqueInicio.setMinimumSize(new java.awt.Dimension(100, 27));
-        tfDestaqueInicio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfDestaqueInicioActionPerformed(evt);
-            }
-        });
         jToolBar1.add(tfDestaqueInicio);
 
         jLabel2.setText(":");
@@ -192,29 +187,16 @@ public class Editor extends javax.swing.JFrame {
             public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
         });
-        menuArquivo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuArquivoActionPerformed(evt);
-            }
-        });
         jMenuBar1.add(menuArquivo);
 
         menuBusca.setText("Busca");
+        menuBusca.setEnabled(false);
         jMenuBar1.add(menuBusca);
 
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void tfDestaqueInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDestaqueInicioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfDestaqueInicioActionPerformed
-
-    private void menuArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuArquivoActionPerformed
-
-
-    }//GEN-LAST:event_menuArquivoActionPerformed
 
     private void menuArquivoMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_menuArquivoMenuSelected
         final JFileChooser fc = new JFileChooser();

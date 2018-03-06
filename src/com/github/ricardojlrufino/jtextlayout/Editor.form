@@ -10,12 +10,12 @@
           </Properties>
           <Events>
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="menuArquivoMenuSelected"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuArquivoActionPerformed"/>
           </Events>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuBusca">
           <Properties>
             <Property name="text" type="java.lang.String" value="Busca"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Menu>
       </SubComponents>
@@ -73,9 +73,6 @@
               <Dimension value="[100, 27]"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfDestaqueInicioActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
