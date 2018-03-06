@@ -1,6 +1,6 @@
 # jTextLayout
 
-Visualização simples de texto para análise de layout de arquivo
+Exitor de texto simples, com recurso de destacar partes importantes do texto
 
 Screenshot:
 
