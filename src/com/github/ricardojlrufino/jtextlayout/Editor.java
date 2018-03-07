@@ -70,7 +70,7 @@ public class Editor extends javax.swing.JFrame {
     public Editor() {
         initComponents();
         editor.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        openFile(new File("/media/ricardo/Dados/TEMP/Retorno/remir/CB070200CC37.RET"));
+//        openFile(new File("/media/ricardo/Dados/TEMP/Retorno/remir/CB070200CC37.RET"));
         trackCursor();
         setupEditorShorcuts();
         findPanel.setVisible(false);
