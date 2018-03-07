@@ -24,7 +24,10 @@
 package com.github.ricardojlrufino.jtextlayout;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,9 +37,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -56,17 +63,38 @@ public class Editor extends javax.swing.JFrame {
     private static final Logger log = Logger.getLogger(Editor.class.getName());
 
     private File currentFile;
-
+    
     /**
      * Creates new form Editor
      */
     public Editor() {
         initComponents();
         editor.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        // openFile(new File("/media/ricardo/Dados/TEMP/Retorno/canello/CB070200CC37.RET"));
+        openFile(new File("/media/ricardo/Dados/TEMP/Retorno/remir/CB070200CC37.RET"));
         trackCursor();
+        setupEditorShorcuts();
+        findPanel.setVisible(false);
+        findPanel.setTextPane(editor);
+        
     }
 
+    private void setupEditorShorcuts() {
+        Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openSearch();
+            }
+        };
+        
+        String keyStrokeAndKey = "control + F";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK);
+        
+        editor.getInputMap().put(keyStroke, keyStrokeAndKey);
+        editor.getActionMap().put(keyStrokeAndKey, action);
+    }
+    private void openSearch(){
+        findPanel.activate();
+    }
     /*
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,7 +114,7 @@ public class Editor extends javax.swing.JFrame {
         tfDestaqueCondicao = new javax.swing.JTextField();
         btnDestaque = new javax.swing.JButton();
         centerPanel = new javax.swing.JPanel();
-        statusPanel = new javax.swing.JPanel();
+        statusPanel = new javax.swing.JPanel(new FlowLayout(FlowLayout.LEFT));
         jLabel4 = new javax.swing.JLabel();
         labelLinha = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -96,9 +124,12 @@ public class Editor extends javax.swing.JFrame {
         labelTextInfo = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         editor = new com.github.ricardojlrufino.jtextlayout.ui.NoWrapTextPane();
+        findPanel = new com.github.ricardojlrufino.jtextlayout.ui.FindPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuArquivo = new javax.swing.JMenu();
+        menuOpen = new javax.swing.JMenuItem();
         menuBusca = new javax.swing.JMenu();
+        menuSearch = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("jTextLayout");
@@ -174,23 +205,32 @@ public class Editor extends javax.swing.JFrame {
         jScrollPane2.setViewportView(editor);
 
         centerPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        centerPanel.add(findPanel, java.awt.BorderLayout.PAGE_START);
 
         getContentPane().add(centerPanel, java.awt.BorderLayout.CENTER);
 
         menuArquivo.setText("Arquivo");
-        menuArquivo.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
-                menuArquivoMenuSelected(evt);
-            }
-            public void menuDeselected(javax.swing.event.MenuEvent evt) {
-            }
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+
+        menuOpen.setText("Abrir");
+        menuOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOpenActionPerformed(evt);
             }
         });
+        menuArquivo.add(menuOpen);
+
         jMenuBar1.add(menuArquivo);
 
-        menuBusca.setText("Busca");
-        menuBusca.setEnabled(false);
+        menuBusca.setText("Editar");
+
+        menuSearch.setText("Buscar");
+        menuSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSearchActionPerformed(evt);
+            }
+        });
+        menuBusca.add(menuSearch);
+
         jMenuBar1.add(menuBusca);
 
         setJMenuBar(jMenuBar1);
@@ -198,26 +238,30 @@ public class Editor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void menuArquivoMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_menuArquivoMenuSelected
-        final JFileChooser fc = new JFileChooser();
-        if(currentFile != null){
+    private void btnDestaqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDestaqueActionPerformed
+        int coluna = getIntValue(tfDestaqueInicio);
+        int colunaFim = getIntValue(tfDestaqueFim);
+        if (coluna > 0 && colunaFim > 0) {
+            addHighlight(tfDestaqueCondicao.getText(), coluna, colunaFim - coluna);
+        }
+    }//GEN-LAST:event_btnDestaqueActionPerformed
+
+    private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
+    final JFileChooser fc = new JFileChooser();
+        if (currentFile != null) {
             fc.setCurrentDirectory(currentFile.getParentFile());
         }
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             openFile(fc.getSelectedFile());
         }
-    }//GEN-LAST:event_menuArquivoMenuSelected
+    }//GEN-LAST:event_menuOpenActionPerformed
 
-    private void btnDestaqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDestaqueActionPerformed
-        int coluna = getIntValue(tfDestaqueInicio);
-        int colunaFim = getIntValue(tfDestaqueFim);
-        if(coluna > 0 && colunaFim > 0){
-            addHighlight(tfDestaqueCondicao.getText(), coluna, colunaFim - coluna);
-        }
-    }//GEN-LAST:event_btnDestaqueActionPerformed
+    private void menuSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSearchActionPerformed
+        openSearch();
+    }//GEN-LAST:event_menuSearchActionPerformed
 
-    private int getIntValue(JTextField field){
+    private int getIntValue(JTextField field) {
         String text = field.getText();
         try {
             return Integer.parseInt(text);
@@ -226,7 +270,7 @@ public class Editor extends javax.swing.JFrame {
             return -1;
         }
     }
-    
+
     private void openFile(File file) {
         log.fine("Opening: " + file.getName());
         currentFile = file;
@@ -257,7 +301,7 @@ public class Editor extends javax.swing.JFrame {
             for (int col : targets) {
                 SimpleAttributeSet sas = new SimpleAttributeSet();
                 StyleConstants.setBackground(sas, Color.YELLOW);
-                sas.addAttribute("colName", "Test");
+                sas.addAttribute("colName", "Block Text " + targetCol + " - " + (targetCol + targetWidth));
                 document.setCharacterAttributes(col, targetWidth, sas, true);
             }
 
@@ -287,10 +331,9 @@ public class Editor extends javax.swing.JFrame {
 
                 if (attribute != null) {
                     labelTextInfo.setText(attribute.toString());
-                }else{
+                } else {
                     labelTextInfo.setText("");
                 }
-                System.out.println("attributeNew : " + attributeNew.getAttribute("colName"));
             }
 
             private int getCaretLinePosition() {
@@ -346,6 +389,7 @@ public class Editor extends javax.swing.JFrame {
     private javax.swing.JButton btnDestaque;
     private javax.swing.JPanel centerPanel;
     private javax.swing.JTextPane editor;
+    private com.github.ricardojlrufino.jtextlayout.ui.FindPanel findPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -362,6 +406,8 @@ public class Editor extends javax.swing.JFrame {
     private javax.swing.JLabel labelTextInfo;
     private javax.swing.JMenu menuArquivo;
     private javax.swing.JMenu menuBusca;
+    private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JMenuItem menuSearch;
     private javax.swing.JPanel statusPanel;
     private javax.swing.JTextField tfDestaqueCondicao;
     private javax.swing.JTextField tfDestaqueFim;
